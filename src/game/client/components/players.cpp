@@ -677,7 +677,10 @@ void CPlayers::RenderPlayer(
 	vec2 BodyPos = Position + vec2(State.GetBody()->m_X, State.GetBody()->m_Y) * TeeAnimScale;
 	if(RenderInfo.m_TeeRenderFlags & TEE_EFFECT_FROZEN)
 	{
-		GameClient()->m_Effects.FreezingFlakes(BodyPos, vec2(32, 32), Alpha);
+		if(g_Config.m_ClShowFreezeFlakes)
+		{
+			GameClient()->m_Effects.FreezingFlakes(BodyPos, vec2(32, 32), Alpha);
+		}
 	}
 
 	int QuadOffsetToEmoticon = NUM_WEAPONS * 2 + 2 + 2;
@@ -764,7 +767,15 @@ void CPlayers::OnRender()
 		aRenderInfo[i] = m_pClient->m_aClients[i].m_RenderInfo;
 		aRenderInfo[i].m_TeeRenderFlags = 0;
 		if(m_pClient->m_aClients[i].m_FreezeEnd != 0)
-			aRenderInfo[i].m_TeeRenderFlags |= TEE_EFFECT_FROZEN | TEE_NO_WEAPON;
+		{
+			aRenderInfo[i].m_TeeRenderFlags |= TEE_EFFECT_FROZEN;
+
+			if(!g_Config.m_ClShowFreezeNinjaWeapon)
+			{
+				aRenderInfo[i].m_TeeRenderFlags |= TEE_NO_WEAPON;
+			}
+		}
+
 		if(m_pClient->m_aClients[i].m_LiveFrozen)
 			aRenderInfo[i].m_TeeRenderFlags |= TEE_EFFECT_FROZEN;
 
